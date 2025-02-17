@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <List sx={{ mb: { xs: 2, sm: 4 } }}>
         <Link href="/invoices">
-          <Image 
+          {/* <Image 
             src="/invoice-hub.svg" 
             alt="logo" 
             width={166} 
@@ -41,13 +41,13 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
               height: 'auto',
               width: '120px' // Smaller logo for mobile
             }}
-          />
+          /> */}
         </Link>
       </List>
       <List sx={{ flexGrow: 1 }}>
         <Box component="span" sx={{ 
           color: '#d1d5db', 
-          fontSize: '12px',
+          fontSize: '14px',
           display: 'block',
           mb: { xs: 0.5, sm: 1 },
           px: { xs: 1, sm: 2 }
