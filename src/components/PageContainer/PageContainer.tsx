@@ -11,7 +11,7 @@ interface PageContainerProps {
 const PageContainer: React.FC<PageContainerProps> = ({ title, children, sx, subChildren }) => {
   return (
     <Box sx={{ width: "100%", ...sx}}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap' }}>
         <Typography
           variant="h4"
           sx={{

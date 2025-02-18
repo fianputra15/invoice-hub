@@ -1,6 +1,11 @@
 import {  Container, Typography } from "@mui/material";
+import { Metadata } from "next";
 import Link from "next/link";
 
+export const metadata: Metadata = {
+  title: `Invoice Hub`,
+  description: 'Welcome to Invoice Hub',
+}
 export default function Home() {
   return (
     <Container>

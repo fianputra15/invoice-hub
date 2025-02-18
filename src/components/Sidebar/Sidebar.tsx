@@ -28,10 +28,10 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
   };
 
   const drawerContent = (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'scroll' }}>
       <List sx={{ mb: { xs: 2, sm: 4 } }}>
-        <Link href="/invoices">
-          {/* <Image 
+        <Link href="/">
+          <Image 
             src="/invoice-hub.svg" 
             alt="logo" 
             width={166} 
@@ -41,13 +41,13 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
               height: 'auto',
               width: '120px' // Smaller logo for mobile
             }}
-          /> */}
+          />
         </Link>
       </List>
       <List sx={{ flexGrow: 1 }}>
         <Box component="span" sx={{ 
           color: '#d1d5db', 
-          fontSize: '14px',
+          fontSize: '16px',
           display: 'block',
           mb: { xs: 0.5, sm: 1 },
           px: { xs: 1, sm: 2 }
@@ -97,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
           sx={{ 
             position: 'fixed',
             top: 8,
-            left: 8,
+            left: 20,
             zIndex: 1200,
             padding: '8px',
             backgroundColor: '#1C2434',
@@ -122,7 +122,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
             color: '#fff',
             width: { xs: '200px', sm: 240 },
             padding: { xs: '16px', sm: '32px' },
-            position: 'relative',
+            position: 'fixed', // Change to fixed
             zIndex: 1,
             height: '100%',
             borderRight: 'none'
