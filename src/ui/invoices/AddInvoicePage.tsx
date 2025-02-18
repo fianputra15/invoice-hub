@@ -57,8 +57,15 @@ const AddInvoicePage = ({ title }: { title: string }) => {
       );
 
       // Check if the invoice number already exists/
-      if (existingInvoices.some((invoice: { number: string }) => invoice.number === `INV${validatedData.number}`)) {
-        setError("Invoice number already exists. Please use a different number.");
+      if (
+        existingInvoices.some(
+          (invoice: { number: string }) =>
+            invoice.number === `INV${validatedData.number}`
+        )
+      ) {
+        setError(
+          "Invoice number already exists. Please use a different number."
+        );
         return;
       }
 
@@ -88,11 +95,6 @@ const AddInvoicePage = ({ title }: { title: string }) => {
 
   return (
     <PageContainer title={title}>
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
       <Container maxWidth={false} disableGutters>
         <Box
           sx={{
@@ -282,6 +284,11 @@ const AddInvoicePage = ({ title }: { title: string }) => {
               </Typography>
             </Box>
           </Box>
+        )}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
         )}
       </Container>
     </PageContainer>

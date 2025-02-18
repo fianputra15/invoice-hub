@@ -11,10 +11,11 @@ interface Invoice {
   status: "paid" | "pending" | "unpaid";
 }
 
+// Custom hook to manage the invoices
 const useInvoices = (searchParams: URLSearchParams) => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
-const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>(() => {
     return searchParams.get("search") || "";
   });

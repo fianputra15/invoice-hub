@@ -21,7 +21,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Button,
   Menu,
@@ -54,13 +53,10 @@ const InvoicesListPage = ({ title }: { title: string }) => {
     handleSearch,
     handleStatusFilter,
     handleDeleteInvoice,
-    handleSelectInvoice
+    handleSelectInvoice,
   } = useInvoices(searchParams);
 
-
-
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState<"edit" | "delete" | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const updateSearchParams = (search: string, status: string) => {
@@ -73,15 +69,13 @@ const InvoicesListPage = ({ title }: { title: string }) => {
     router.push(query ? `${pathname}?${query}` : pathname);
   };
 
-  const handleDialogOpen = (type: "edit" | "delete", invoice: Invoice) => {
-    setDialogType(type);
+  const handleDialogOpen = (invoice: Invoice) => {
     handleSelectInvoice(invoice);
     setOpenDialog(true);
   };
 
   const handleDialogClose = () => {
     setOpenDialog(false);
-    setDialogType(null);
     handleSelectInvoice(null);
   };
 
@@ -308,7 +302,7 @@ const InvoicesListPage = ({ title }: { title: string }) => {
                       >
                         <MuiMenuItem
                           onClick={() =>
-                            handleDialogOpen("delete", selectedInvoice!)
+                            handleDialogOpen(selectedInvoice!)
                           }
                         >
                           <DeleteIcon sx={{ color: "red" }} /> Delete
@@ -329,29 +323,23 @@ const InvoicesListPage = ({ title }: { title: string }) => {
           </TableContainer>
         </Box>
         <Dialog open={openDialog} onClose={handleDialogClose}>
-          <DialogTitle>
-            Delete Invoice
-          </DialogTitle>
+          <DialogTitle>Delete Invoice</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              {dialogType === "edit" ? (
-                "Edit the details of the invoice."
-              ) : (
-                <Typography variant="subtitle1" sx={{ fontWeight: "600" }}>
-                  Are you sure you want to delete this invoice{" "}
-                  {selectedInvoice?.number}?
-                </Typography>
-              )}
-            </DialogContentText>
-            {/* Additional form fields for editing can be added here */}
+            <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: "600" }}
+              >
+                Are you sure you want to delete this invoice{" "}
+                {selectedInvoice?.number}?
+            </Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDialogClose} color="primary">
               Cancel
             </Button>
             <Button onClick={handleDeleteInvoiceList} color="secondary">
-                Delete
-              </Button>
+              Delete
+            </Button>
           </DialogActions>
         </Dialog>
       </PageContainer>
