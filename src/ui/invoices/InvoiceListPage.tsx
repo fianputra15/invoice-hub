@@ -82,7 +82,6 @@ const InvoicesListPage = ({ title }: { title: string }) => {
       }
 
       if (["paid", "pending", "unpaid"].includes(status)) {
-        console.log('hit')
         filtered = filtered.filter((invoice) => invoice.status === status);
       }
 
@@ -162,8 +161,6 @@ const InvoicesListPage = ({ title }: { title: string }) => {
     setSelectedInvoice(null);
   };
 
-  console.log("search term:", searchTerm);
-  console.log("status:", statusFilter);
   return (
     <>
       <PageContainer
