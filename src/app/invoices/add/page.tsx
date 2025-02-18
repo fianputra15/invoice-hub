@@ -1,9 +1,9 @@
 import AddInvoicePage from '@/ui/invoices/AddInvoicePage';
 import React from 'react';
 import type { Metadata } from 'next'
+import { TITLE } from '@/constants/addInvoices';
 
 
-const TITLE = 'Add Invoice';
 
 export const metadata: Metadata = {
   title: `Invoice Hub | ${TITLE}`,

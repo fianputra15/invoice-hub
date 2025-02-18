@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -29,12 +29,11 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { INVOICE_KEY } from "@/utils/invoice";
-import { SelectChangeEvent } from "@mui/material/Select";
 import Image from "next/image";
 import PageContainer from "@/components/PageContainer/PageContainer";
-import { useSearchParams } from "next/navigation";
-import { useRouter, usePathname } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import useInvoices from "@/hooks/useInvoices";
+
 interface Invoice {
   name: string;
   number: number;
@@ -47,68 +46,26 @@ const InvoicesListPage = ({ title }: { title: string }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>(() => {
-    return searchParams?.get("search") || "";
-  });
-  const [statusFilter, setStatusFilter] = useState((() => {
-    return searchParams?.get("status") || "";
-  })
-  );
+  const {
+    filteredInvoices,
+    searchTerm,
+    statusFilter,
+    selectedInvoice,
+    handleSearch,
+    handleStatusFilter,
+    handleDeleteInvoice,
+    handleSelectInvoice
+  } = useInvoices(searchParams);
+
+
+
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState<"edit" | "delete" | null>(null);
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  useEffect(() => {
-    const savedInvoices = localStorage.getItem(INVOICE_KEY);
-    if (savedInvoices) {
-      setInvoices(JSON.parse(savedInvoices));
-      setFilteredInvoices(JSON.parse(savedInvoices));
-    }
-  }, []);
-
-  const onfilterInvoices = React.useCallback(
-    (search: string, status: string) => {
-      let filtered = invoices;
-
-      if (search) {
-        filtered = filtered.filter(
-          (invoice) =>
-            invoice.name.toLowerCase().includes(search) ||
-            invoice.number.toString().includes(search)
-        );
-      }
-
-      if (["paid", "pending", "unpaid"].includes(status)) {
-        filtered = filtered.filter((invoice) => invoice.status === status);
-      }
-
-      setFilteredInvoices(filtered);
-    },
-    [invoices]
-  );
-
-  useEffect(() => {
-    onfilterInvoices(searchTerm, statusFilter);
-  }, [searchTerm, statusFilter, invoices, onfilterInvoices]);
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value.toLowerCase();
-    setSearchTerm(term);
-    updateSearchParams(term, statusFilter);
-  };
-
-  const handleStatusFilter = (event: SelectChangeEvent<string>) => {
-    const status = event.target.value;
-    setStatusFilter(status);
-    updateSearchParams(searchTerm, status);
-  };
 
   const updateSearchParams = (search: string, status: string) => {
     const params = new URLSearchParams();
-    
+
     if (search) params.set("search", search);
     if (status && status !== "all") params.set("status", status);
 
@@ -118,47 +75,32 @@ const InvoicesListPage = ({ title }: { title: string }) => {
 
   const handleDialogOpen = (type: "edit" | "delete", invoice: Invoice) => {
     setDialogType(type);
-    setSelectedInvoice(invoice);
+    handleSelectInvoice(invoice);
     setOpenDialog(true);
   };
 
   const handleDialogClose = () => {
     setOpenDialog(false);
     setDialogType(null);
-    setSelectedInvoice(null);
-  };
-
-  const handleUpdateInvoice = () => {
-    // Logic for updating the invoice
-    handleDialogClose();
-  };
-
-  const handleDeleteInvoice = () => {
-    // Logic for deleting the invoice
-    handleDialogClose();
-    handleMenuClose();
-    const existingInvoices = JSON.parse(
-      localStorage.getItem(INVOICE_KEY) || "[]"
-    );
-    const updatedInvoices = existingInvoices.filter(
-      (inv: Invoice) => inv.number !== selectedInvoice!.number
-    );
-    localStorage.setItem(INVOICE_KEY, JSON.stringify(updatedInvoices));
-    setInvoices(updatedInvoices);
-    setFilteredInvoices(updatedInvoices);
+    handleSelectInvoice(null);
   };
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
     invoice: Invoice
   ) => {
-    setSelectedInvoice(invoice);
+    handleSelectInvoice(invoice);
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    setSelectedInvoice(null);
+    handleSelectInvoice(null);
+  };
+
+  const handleDeleteInvoiceList = async () => {
+    await handleDeleteInvoice();
+    handleDialogClose();
   };
 
   return (
@@ -178,7 +120,10 @@ const InvoicesListPage = ({ title }: { title: string }) => {
               placeholder="Search"
               size="small"
               value={searchTerm}
-              onChange={handleSearch}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                handleSearch(e);
+                updateSearchParams(e.target.value, statusFilter);
+              }}
               sx={{ width: { xs: "100%", sm: "200px", lg: "200px" } }}
               InputProps={{
                 startAdornment: (
@@ -196,7 +141,10 @@ const InvoicesListPage = ({ title }: { title: string }) => {
               <Select
                 value={statusFilter}
                 label="Status"
-                onChange={handleStatusFilter}
+                onChange={(e) => {
+                  handleStatusFilter(e);
+                  updateSearchParams(searchTerm, e.target.value);
+                }}
               >
                 <MenuItem value="all">All</MenuItem>
                 <MenuItem value="paid">Paid</MenuItem>
@@ -382,7 +330,7 @@ const InvoicesListPage = ({ title }: { title: string }) => {
         </Box>
         <Dialog open={openDialog} onClose={handleDialogClose}>
           <DialogTitle>
-            {dialogType === "edit" ? "Edit Invoice" : "Delete Invoice"}
+            Delete Invoice
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -401,15 +349,9 @@ const InvoicesListPage = ({ title }: { title: string }) => {
             <Button onClick={handleDialogClose} color="primary">
               Cancel
             </Button>
-            {dialogType === "edit" ? (
-              <Button onClick={handleUpdateInvoice} color="primary">
-                Update
-              </Button>
-            ) : (
-              <Button onClick={handleDeleteInvoice} color="secondary">
+            <Button onClick={handleDeleteInvoiceList} color="secondary">
                 Delete
               </Button>
-            )}
           </DialogActions>
         </Dialog>
       </PageContainer>

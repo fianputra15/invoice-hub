@@ -20,14 +20,8 @@ import Image from "next/image";
 import PageContainer from "@/components/PageContainer/PageContainer";
 import InputText from "@/components/Input/InputText";
 import { useForm } from "react-hook-form";
+import { InvoiceForm } from "@/lib/types/invoices";
 
-interface InvoiceForm {
-  name: string;
-  number: number;
-  dueDate: string;
-  amount: number;
-  status: "paid" | "pending" | "unpaid" | "";
-}
 const AddInvoicePage = ({ title }: { title: string }) => {
   const [openAlertSuccess, setOpenAlertSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
